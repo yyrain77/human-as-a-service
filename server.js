@@ -140,16 +140,16 @@ function parseClientName(ua) {
 
 function parseRegistrationName(text) {
   if (!text || typeof text !== 'string') return null;
-  const t = text.trim();
+  // 兼容各种客户端：消息可能被套上模板/前缀/时间戳，所以不再要求整句完全匹配，取最后一处“我是：xxx / 名字：xxx”
+  const t = text.replace(/[`*_\~#>]/g, '').trim();
   const patterns = [
-    /^(?:我是|名字|姓名|叫我|name)[\s:：]+([^\n\r]{1,20})$/i,
-    /^我是([^\s:：\n\r]{1,15})$/,
-    /^(?:my name is)[\s:：]+([^\n\r]{1,20})$/i
+    /(?:我是|名字|姓名|叫我|name|my name is)\s*[:：]\s*([^\n\r，,。.!！?？"“”'「」]{1,20})/gi,
+    /^\s*我是\s*([^\s:：\n\r，,。.!！?？]{1,15})\s*$/gm
   ];
   for (const p of patterns) {
-    const match = t.match(p);
-    if (match && match[1]) {
-      const name = match[1].replace(/[`*_\~#]/g, '').trim();
+    const matches = [...t.matchAll(p)];
+    if (matches.length) {
+      const name = matches[matches.length - 1][1].trim();
       if (name.length >= 1 && name.length <= 20) return name;
     }
   }
@@ -674,7 +674,17 @@ app.post(['/chat/completions', '/v1/chat/completions'], authenticate, async (req
   saveSessionsToDisk();
 
   if (!session.isRegistered) {
-    const registeredName = parseRegistrationName(lastUserMsg);
+    let registeredName = parseRegistrationName(lastUserMsg);
+    if (!registeredName) {
+      // 有些客户端会在最后再塞一条 user 消息（模板/指令），往前再找几条 user 消息
+      for (let i = messages.length - 1, n = 0; i >= 0 && n < 4 && !registeredName; i--) {
+        if (messages[i].role !== 'user') continue;
+        n++;
+        const c = messages[i].content;
+        const txt = typeof c === 'string' ? c : (Array.isArray(c) ? c.filter(x => x.type === 'text').map(x => x.text).join('\n') : '');
+        registeredName = parseRegistrationName(txt);
+      }
+    }
 
     if (registeredName) {
       session.isRegistered = true;
