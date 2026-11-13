@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
-const MODEL_NAME = process.env.MODEL_NAME || 'gugu-bot';
+const MODEL_NAME = process.env.MODEL_NAME || '小雨大模型';
 const API_KEY = process.env.API_KEY || '';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'cyr0111';
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
@@ -32,7 +32,7 @@ try {
 
 const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
 const REPLY_TIMEOUT_SECONDS = parseInt(process.env.REPLY_TIMEOUT_SECONDS || '600', 10);
-const TIMEOUT_FALLBACK_TEXT = process.env.TIMEOUT_FALLBACK_TEXT || '（gugu-bot 算力节点过热，思考超时啦，请再问一次试试～）';
+const TIMEOUT_FALLBACK_TEXT = process.env.TIMEOUT_FALLBACK_TEXT || '（小雨大模型 算力节点过热，思考超时啦，请再问一次试试～）';
 
 const app = express();
 
@@ -595,13 +595,13 @@ app.get(['/models', '/v1/models'], (req, res) => {
     id: id,
     object: 'model',
     created: Math.floor(Date.now() / 1000),
-    owned_by: 'gugu-bot'
+    owned_by: '小雨大模型'
   }));
   res.json({ object: 'list', data });
 });
 
 app.get(['/chat/completions', '/v1/chat/completions'], (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'gugu-bot endpoint ready.' });
+  res.status(200).json({ status: 'ok', message: '小雨大模型 endpoint ready.' });
 });
 
 app.post(['/chat/completions', '/v1/chat/completions'], authenticate, async (req, res) => {
@@ -690,12 +690,12 @@ app.post(['/chat/completions', '/v1/chat/completions'], authenticate, async (req
       saveSessionsToDisk();
 
       if (bot && TELEGRAM_ADMIN_CHAT_ID) {
-        bot.telegram.sendMessage(TELEGRAM_ADMIN_CHAT_ID, `🔔 *新朋友登记通知*：\n\n好友【*${registeredName}*】已通过身份认证，接入了 gugu-bot！`, { parse_mode: 'Markdown' }).catch(() => {});
+        bot.telegram.sendMessage(TELEGRAM_ADMIN_CHAT_ID, `🔔 *新朋友登记通知*：\n\n好友【*${registeredName}*】已通过身份认证，接入了 小雨大模型！`, { parse_mode: 'Markdown' }).catch(() => {});
       }
 
       return sendDirectSystemReply(res, isStream, model, successText);
     } else {
-      const promptText = `🤖 **【gugu-bot 接入认证提醒】**\n\n检测到您是新用户接入！为了给您提供专属个性化解答，请先完成【身份登记】。\n\n👉 **请直接回复以下格式完成登记：**\n\`我是: 你的名字\`（例如：\`我是: 小明\` 或 \`名字: 张三\`）\n\n完成登记后，gugu-bot 将正式为您开启智能交互信道！`;
+      const promptText = `🤖 **【小雨大模型 接入认证提醒】**\n\n检测到您是新用户接入！为了给您提供专属个性化解答，请先完成【身份登记】。\n\n👉 **请直接回复以下格式完成登记：**\n\`我是: 你的名字\`（例如：\`我是: 小明\` 或 \`名字: 张三\`）\n\n完成登记后，小雨大模型 将正式为您开启智能交互信道！`;
 
       session.history.push({
         role: 'assistant',
@@ -732,7 +732,7 @@ app.post(['/chat/completions', '/v1/chat/completions'], authenticate, async (req
     const letters = [...session.mailbox];
     session.mailbox = [];
     saveSessionsToDisk();
-    const greetingText = letters.map(l => `💌 [gugu-bot 曾给你留了悄悄话 (${l.createdAt})]:\n"${l.content}"`).join('\n\n') + '\n\n' + '--------------------------------\n';
+    const greetingText = letters.map(l => `💌 [小雨大模型 曾给你留了悄悄话 (${l.createdAt})]:\n"${l.content}"`).join('\n\n') + '\n\n' + '--------------------------------\n';
     
     if (isStream) {
       const chunkRole = {
@@ -781,12 +781,12 @@ app.get(['/admin', '/console'], (req, res) => {
 
 app.get('/', (req, res) => {
   res.send(`
-    <h2>🕊️ gugu-bot 专属多朋友客服系统</h2>
+    <h2>🕊️ 小雨大模型 专属多朋友客服系统</h2>
     <p>OpenAI 兼容 Base URL: <code>${req.protocol}://${req.get('host')}/v1</code></p>
     <p><b>👉 请使用手机浏览器进入专属工作台:</b> <a href="/admin" style="font-size:18px;font-weight:bold;">进入 /admin</a></p>
   `);
 });
 
 app.listen(PORT, () => {
-  console.log(`🕊️ gugu-bot (Dedicated Chat Rooms & 10min Timeout) 启动完成！端口 ${PORT}`);
+  console.log(`🕊️ 小雨大模型 (Dedicated Chat Rooms & 10min Timeout) 启动完成！端口 ${PORT}`);
 });
