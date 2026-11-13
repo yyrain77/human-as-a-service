@@ -351,7 +351,7 @@
         <div class="quick-chip" onclick="fillQuick('哈哈哈哈哈哈，有意思！')">😂 哈哈</div>
         <div class="quick-chip" onclick="fillQuick('你先别急，听我继续给你说：\n')">🗣️ 听我说</div>
         <div class="quick-chip" onclick="fillQuick('稍等一下哈，我手头有点事，马上给你解答！')">⏳ 稍等</div>
-        <div class="quick-chip" onclick="fillQuick('（gugu-bot 正在努力散热降温中...）')">❄️ 散热中</div>
+        <div class="quick-chip" onclick="fillQuick('（小雨大模型 正在努力散热降温中...）')">❄️ 散热中</div>
       </div>
 
       <div class="room-footer">
@@ -584,7 +584,7 @@
           }
           return `
             <div class="msg-group ${isUser ? 'user' : 'assistant'}">
-              <div class="msg-sender">${isUser ? s.alias : 'gugu-bot (我)'} · ${m.time || ''}</div>
+              <div class="msg-sender">${isUser ? s.alias : '小雨大模型 (我)'} · ${m.time || ''}</div>
               <div class="msg-bubble">
                 ${m.content ? m.content.replace(/\n/g, '<br/>') : ''}
                 ${imgsHtml}
